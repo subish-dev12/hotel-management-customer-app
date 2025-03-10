@@ -62,6 +62,7 @@ export async function getGuest(email) {
     .single();
 
   // No error here! We handle the possibility of no guest in the sign in callback
+  //if there's no guests this will return null.
   return data;
 }
 
@@ -156,6 +157,9 @@ export async function getCountries() {
 
 /////////////
 // CREATE
+
+//newGuest parameter here is the object that has the email and the fullName as the parameter,
+//and these parameters are actually the field  name of the guest table that we have to match
 
 export async function createGuest(newGuest) {
   const { data, error } = await supabase.from("guests").insert([newGuest]);

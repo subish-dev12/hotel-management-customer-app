@@ -1,6 +1,5 @@
 "use client";
 //we have make this a client compoentn just to use the usePathname react custom hook.
-// eslint-disable-next-line import/order
 import {
   CalendarDaysIcon,
   HomeIcon,
@@ -51,6 +50,7 @@ function SideNavigation() {
 
         <li className="mt-auto">
           <SignOutButton />
+          {/* signoutbutton component will be client too since it's rendered on the client component.  */}
         </li>
       </ul>
     </nav>
