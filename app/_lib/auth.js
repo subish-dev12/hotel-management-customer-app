@@ -41,6 +41,15 @@ const authConfig = {
     //we can perform all sort of operations that are linked with signing in process
     //it somewhat acts like a middleware since it runs after the user has entered the
     //credentials but before the actual signing it take place
+    async session({ session, user }) {
+      const guest = await getGuest(session.user.email);
+      //previosly session object had only name email and image.
+      //but we added guestId there, for fetching guest information on other various pages.
+      session.user.guestId = guest.id;
+      return session;
+      //returning the session with added id.
+      // console.log("session ko session", session);
+    },
   },
   pages: {
     signIn: "/login",
@@ -68,3 +77,8 @@ export const {
 //pages object of the authConfig:
 // By default, NextAuth provides built-in pages for these actions (e.g., at /api/auth/signin, signout), but the "pages" object lets you override these with custom pages in your Next.js application. This is particularly useful if you want to
 //  create a tailored user experience or integrate authentication flows into your app’s design.
+
+//so when does the session callback runs then ?
+// ---->Whenver the user signs in initially,auth js geenrates the initial session object (usually from the provider like username email etc.)
+//session Callback: Runs immediately after this base(initial) session is created to let you customize it before it’s saved or sent to the client.
+//so session call back allows us to modify/add the session datas on the session like the for example "id".
