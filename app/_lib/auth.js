@@ -2,83 +2,85 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { createGuest, getGuest } from "./data-service";
-//signIn is about authenticating the user (i.e., "Can this user log in?").
-// authorized is about authorizing access to specific resources (i.e., "Can this user access this route or API?").
-// The signIn callback must succeed (return true) for a session to be created, and only after a session exists can authorized come into play to check access rights.
-//authorized callback is called after the user has logged in (authenticated) and the authorized callback only works after the user has authenticated and wants access to certain
-//resource of our app
+
+// This file sets up authentication with NextAuth.js using Google as a login option.
+
 const authConfig = {
+  // Providers: List of ways users can sign in.
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
     }),
   ],
-  // authorized determines whether a user is authorized to access a specific page or resource in your application.
+
+  // Callbacks: Functions that run at different steps of the login process.
   callbacks: {
+    // Authorized: Checks if a user can access a page or feature.
+    // Runs after login when someone tries to visit a protected page.
     authorized({ auth, request }) {
-      // auth gives the info about current session like user id , name , email etc
-      return !!auth?.user;
-      //double exclamation here is the trick to convert any value into boolean (true or false.)
+      // 'auth' has session info (like user ID, name, email).
+      // Returns true if user is logged in, false if not.
+      return !!auth?.user; // Double !! turns it into true/false.
     },
+
+    // SignIn: Runs when a user tries to log in.
+    // Checks if login is okay and sets up the user in our system.
     async signIn({ user, account, profile }) {
-      // https://grok.com/chat/9a9516a0-3549-4582-8af4-c21f732f180c
-      //the user parameter is actually the user object (email,name, id....) that is returned by the provider (google in this case)
+      // 'user' is info from Google (email, name, etc.).
       try {
+        // See if this user already exists in our database.
         const existingGuest = await getGuest(user.email);
-        //we're checking here if the user already exists or not
-        console.log("user ko data", user);
-        if (!existingGuest)
+        console.log("User data:", user);
+
+        // If user doesn’t exist, create them with their email and name.
+        if (!existingGuest) {
           await createGuest({ email: user.email, fullName: user.name });
-        return true;
+        }
+        return true; // Login successful.
       } catch {
-        return false;
+        return false; // Login fails if something goes wrong.
       }
-      //if some error happens at the getGuest function then we'll move to the catch block and return false.
-      //and user is not going to be logged in
     },
-    // it is a callback function is invoked before the actual sign up happens
-    //we can perform all sort of operations that are linked with signing in process
-    //it somewhat acts like a middleware since it runs after the user has entered the
-    //credentials but before the actual signing it take place
+
+    // Session: Runs after sign-in to customize the session data.
+    // Adds extra info (like guest ID) to the session for later use.
     async session({ session, user }) {
+      // Get the guest info from our database using the email.
       const guest = await getGuest(session.user.email);
-      //previosly session object had only name email and image.
-      //but we added guestId there, for fetching guest information on other various pages.
+      // Add the guest’s ID to the session (originally just name, email, image).
       session.user.guestId = guest.id;
-      return session;
-      //returning the session with added id.
-      // console.log("session ko session", session);
+      return session; // Return the updated session.
     },
   },
+
+  // Pages: Custom page for login.
   pages: {
-    signIn: "/login",
+    signIn: "/login", // Users go here to sign in instead of the default page.
   },
-  secret: process.env.NEXTAUTH_SECRET, // Added for security
+
+  // Secret: A security key for NextAuth.
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
+// Export tools from NextAuth to use in our app (login, logout, etc.).
 export const {
-  auth,
-  signIn,
-  signOut,
-  handlers: { GET, POST },
+  auth, // Checks session or protects routes.
+  signIn, // Logs a user in.
+  signOut, // Logs a user out.
+  handlers: { GET, POST }, // Handles API requests for auth.
 } = NextAuth(authConfig);
-// These exported functions—like signIn, signOut, auth, and
-//  handlers—are tools NextAuth gives you to handle authentication without writing everything from scratch.
 
-//https://grok.com/chat/0c57aaf7-0724-447e-ae26-e7c222d88167
+// ---- Simple Notes ----
+// How It Works:
+// 1. SignIn: Runs when a user logs in. Makes sure they’re valid and sets them up.
+// 2. Session: Runs right after sign-in to add extra info to their session (like guest ID).
+// 3. Authorized: Runs later when a user tries to access a protected page. Checks if they’re logged in.
 
-// When does the authorized function get called?
-// The authorized callback (optional in the callbacks object) is invoked by the auth middleware when a visitor attempts to access a protected route (e.g., /account, specified in matcher).
-// It determines if access is granted, such as by checking if the visitor is authenticated.
-//if the user is unauthenticated then by default the user is redirected to the signin page.
-//check it yourself...
+// When Things Happen:
+// - SignIn: When someone clicks "Sign in with Google."
+// - Session: Right after sign-in succeeds, and also when the app checks the session later.
+// - Authorized: When a logged-in user tries to visit a protected page (e.g., /account).
+// - If authorized fails (returns false), they’re sent to /login.
 
-//pages object of the authConfig:
-// By default, NextAuth provides built-in pages for these actions (e.g., at /api/auth/signin, signout), but the "pages" object lets you override these with custom pages in your Next.js application. This is particularly useful if you want to
-//  create a tailored user experience or integrate authentication flows into your app’s design.
-
-//so when does the session callback runs then ?
-// ---->Whenver the user signs in initially,auth js geenrates the initial session object (usually from the provider like username email etc.)
-//session Callback: Runs immediately after this base(initial) session is created to let you customize it before it’s saved or sent to the client.
-//so session call back allows us to modify/add the session datas on the session like the for example "id".
+// Pages: We set /login as the sign-in page instead of using NextAuth’s default one.
