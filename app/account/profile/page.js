@@ -1,12 +1,20 @@
 import SelectCountry from "@/app/_components/SelectCountry";
 import UpdateProfileForm from "@/app/_components/UpdateProfileForm";
+import { auth } from "@/app/_lib/auth";
+import { getGuest } from "@/app/_lib/data-service";
 
 export const metadata = {
   title: "Update Profile",
 };
 
-export default function Page() {
-  const nationality = "portugal";
+export default async function Page() {
+  const session = await auth();
+  console.log("very much session", session);
+
+  const guest = await getGuest(session.user.email);
+  console.log("kun guest ho ", guest);
+
+  const nationality = guest.nationality;
 
   return (
     <div>
@@ -24,7 +32,7 @@ export default function Page() {
           since we are in server component here,
       */}
 
-      <UpdateProfileForm>
+      <UpdateProfileForm guest={guest}>
         {/* we are importing a server component inside a server component and pass the instance of already exsecuted server component to the updateprifleform client component 
         which is legit because the SC HAS already done all t he fetching , ran through its jsx and already converted to the react element which can be legally passed to the client component.   */}
         <SelectCountry
