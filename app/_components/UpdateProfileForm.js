@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { updateGuest } from "../_lib/action";
+import { useFormStatus } from "react-dom";
 
 // https://chat.deepseek.com/a/chat/s/64dcce27-2836-4739-9241-5828b689343b
 function UpdateProfileForm({ guest, children }) {
@@ -12,8 +13,8 @@ function UpdateProfileForm({ guest, children }) {
   //IT IS NECESSARY TO MATCH THE INPUT NAME WITH THE TABLE FIELDS IN DB.
   //
   // CHANGE
-  const countryFlag = "pt.jpg";
-  const nationality = "portugal";
+  // const countryFlag = "pt.jpg";
+  // const nationality = "portugal";
   return (
     <form
       className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col"
@@ -43,7 +44,7 @@ function UpdateProfileForm({ guest, children }) {
         <div className="flex items-center justify-between">
           <label htmlFor="nationality">Where are you from?</label>
           <img
-            src={countryFlag}
+            src={guest.countryFlag}
             alt="Country flag"
             className="h-5 rounded-sm"
           />
@@ -62,11 +63,27 @@ function UpdateProfileForm({ guest, children }) {
       </div>
 
       <div className="flex justify-end items-center gap-6">
-        <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
-          Update profile
-        </button>
+        <Button />
+        {/* as you can see the useFormStatus hook is not directly called inside this comopnent rather it is called inside the component that is 
+        present in the form or in other words THAT HOOK CAN ONLY USED INSIDE THE DIRECT CHILD OF THE FORM  */}
       </div>
     </form>
   );
 }
 export default UpdateProfileForm;
+
+function Button() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300"
+      disabled={pending}
+    >
+      Update profile
+    </button>
+  );
+}
+
+//useFormStatus hook can only be called inside the form context that means the hook can only be used in a component that is called inside the form.
+//but the hook can't be called from the component that contains the  hook
+//https://grok.com/chat/7e6e7314-5c95-4b71-a6ea-4717f25eea10?referrer=website

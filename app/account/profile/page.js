@@ -9,10 +9,8 @@ export const metadata = {
 
 export default async function Page() {
   const session = await auth();
-  console.log("very much session", session);
 
   const guest = await getGuest(session.user.email);
-  console.log("kun guest ho ", guest);
 
   const nationality = guest.nationality;
 

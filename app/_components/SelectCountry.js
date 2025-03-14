@@ -4,8 +4,8 @@ import { getCountries } from "@/app/_lib/data-service";
 
 async function SelectCountry({ defaultCountry, name, id, className }) {
   // CHANGE
-  const countryFlag = "pt.jpg";
-  const nationality = "portugal";
+  // const countryFlag = "pt.jpg";
+  // const nationality = "portugal";
   const countries = await getCountries();
   const flag =
     countries.find((country) => country.name === defaultCountry)?.flag ?? "";
