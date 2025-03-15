@@ -29,6 +29,7 @@ function ReservationCard({ booking }) {
           src={image}
           alt={`Cabin ${name}`}
           className="object-cover border-r border-primary-800"
+          fill
         />
       </div>
 

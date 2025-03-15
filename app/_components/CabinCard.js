@@ -10,7 +10,7 @@ function CabinCard({ cabin }) {
       {/* here in this image component if we only write fill it will fill up the entire viewport so 
       what we have to do is we have to enclose image component with another div and make that parent div 
       relative and the child image comopnent should be object-cover so it can fill up the parent container. */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative aspect-square">
         <Image
           src={image}
           fill

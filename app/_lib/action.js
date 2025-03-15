@@ -35,9 +35,8 @@ export async function updateGuest(formData) {
 
   //to immediately refresh the cache, without showing the stale data.
   revalidatePath("/account/profile");
-
+  // https://grok.com/chat/7e6e7314-5c95-4b71-a6ea-4717f25eea10?referrer=website
   // return data;
-
   // console.log(updateData);
 }
 
