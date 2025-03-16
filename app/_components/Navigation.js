@@ -3,7 +3,6 @@ import { auth } from "../_lib/auth";
 import Image from "next/image";
 //auth() reads the session from cookies, which are only available at request time (when the server processes an incoming request).
 //so any component that calls auth automatically makes the route DYNAMIC.
-
 //this would eventually make all the routes of this app dynamic since this component is used in all the routes.
 export default async function Navigation() {
   const session = await auth();
