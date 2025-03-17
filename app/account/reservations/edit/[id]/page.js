@@ -2,7 +2,6 @@ export default function Page() {
   // CHANGE
   const reservationId = 23;
   const maxCapacity = 23;
-
   return (
     <div>
       <h2 className="font-semibold text-2xl text-accent-400 mb-7">
