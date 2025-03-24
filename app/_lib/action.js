@@ -2,7 +2,8 @@
 import { revalidatePath } from "next/cache";
 import { auth, signIn, signOut } from "./auth";
 import { supabase } from "./supabase";
-import { getBookings } from "./data-service";
+import { getBooking, getBookings } from "./data-service";
+import { redirect } from "next/navigation";
 
 //data sent from the form gets passed to this function as formData(we can give any name to this argument)
 //its a common convention not to use try catch block on the server action instead throwing errors directly.
@@ -40,11 +41,13 @@ export async function updateGuest(formData) {
 }
 
 export default async function deleteReservation(bookingId) {
+  //authentication
   const session = await auth();
   if (!session) throw new Error("Please login to your account");
 
   //hacker can delete any row of the bookings table so for extra protection let's check if the valid reservation of the user is getting deleted or not.
   //Prevents unauthorized deletion of other users' bookings
+  //authorization
   const guestBookings = await getBookings(session.user.guestId);
   const guestBookingsID = guestBookings.map((booking) => booking.id);
 
@@ -63,24 +66,49 @@ export default async function deleteReservation(bookingId) {
   //since we are not using the state to re-render UI we have to manually revalidate the cache to refetch so latest data gets displayed in UI
   revalidatePath("/account/reservations");
 }
-
+//server action don't have access to the URL (we can't use params prop) so sometimes we do need to send some data from the form through the hidden input field TRICK
 export async function updateReservation(formData) {
-  const reservationId = formData.get("reservationId");
+  // console.log("formdata k raixa ta ", formData);
+  const reservationId = Number(formData.get("reservationId"));
+  //1) authentication
+  const session = await auth();
+  if (!session) throw new Error("Please login before updating the form");
+
+  // 2) authorization
+  const bookingGuest = await getBookings(session.user.guestId);
+  const bookingIds = bookingGuest.map((booking) => booking.id);
+  if (!bookingIds.includes(reservationId))
+    throw new Error("You are not allowed to edit this form data");
+
+  //console log garda ta reservationID string nikliyo so number ma convert.
+  // 3)building the update data
   const numGuests = formData.get("numGuests");
-  const observations = formData.get("observations");
-  // console.log("reservationId thyakai k ho la ta", reservationId);
-  const { data, error } = await supabase
+  const observations = formData.get("observations").slice(0, 1000);
+  //user could spam the observation text area field with thousands of words so we sliced only the first thousand characters.
+  const updateData = { numGuests, observations };
+
+  // 4) mutations
+  const { error } = await supabase
     .from("bookings")
-    .update(numGuests, observations)
+    .update(updateData)
     .eq("id", reservationId)
     .select()
     .single();
-
+  //error handling
   if (error) {
     console.error(error);
     throw new Error("Booking could not be updated");
   }
-  return data;
+
+  //revalidating
+  //revalidations must be done for two paths since the max guest number should be displayed at "/reservations" path
+  // max guest and information on the /edit/id url
+  //DISCLAIMER:REVALIDATION SHOULD ALWAYS BE DONE FIRST BEFORE REDIRECTING.
+  revalidatePath(`/account/reservations/edit/${reservationId}`);
+  revalidatePath("/account/reservations");
+
+  //redirecting
+  redirect("/account/reservations");
 }
 
 export async function signInAction() {

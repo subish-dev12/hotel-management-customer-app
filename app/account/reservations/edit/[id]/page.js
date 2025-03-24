@@ -1,3 +1,4 @@
+import SubmitButton from "@/app/_components/SubmitButton";
 import { updateReservation } from "@/app/_lib/action";
 import { getBooking, getCabin } from "@/app/_lib/data-service";
 
@@ -11,10 +12,6 @@ export default async function Page({ params }) {
 
   const { maxCapacity } = await getCabin(cabinId);
 
-  console.log("k hola maxcapacity chai", maxCapacity);
-
-  // console.log("reservationdata nai data", reservationData);
-
   return (
     <div>
       <h2 className="font-semibold text-2xl text-accent-400 mb-7">
@@ -26,7 +23,8 @@ export default async function Page({ params }) {
         action={updateReservation}
       >
         <input type="hidden" value={reservationId} name="reservationId" />
-        {/* we are using a hidden input field to send a currnet reservationId that needed to be edited to the server action*/}
+        {/* we are using a hidden input field to send a currnet reservationId that needed to be edited to the server action since we can't use the params(for obtaining the query parameter through url) prop on the server action 
+        since a server action is not a ocmponent*/}
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
@@ -36,6 +34,7 @@ export default async function Page({ params }) {
             required
             defaultValue={numGuests}
           >
+            {/* Purpose: The defaultValue prop is used to set the initial value of an uncontrolled input field. */}
             <option value="" key="">
               Select number of guests...
             </option>
@@ -59,9 +58,10 @@ export default async function Page({ params }) {
         </div>
 
         <div className="flex justify-end items-center gap-6">
-          <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
+          {/* <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
             Update reservation
-          </button>
+          </button> */}
+          <SubmitButton />
         </div>
       </form>
     </div>
