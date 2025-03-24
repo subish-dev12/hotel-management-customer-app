@@ -61,7 +61,9 @@ function UpdateProfileForm({ guest, children }) {
       </div>
 
       <div className="flex justify-end items-center gap-6">
-        <SubmitButton />
+        <SubmitButton pendingLabel={"Updating Profile..."}>
+          Update profile
+        </SubmitButton>
         {/* as you can see the useFormStatus hook is not directly called inside this comopnent rather it is called inside the component that is 
         present in the form or in other words THAT HOOK CAN ONLY USED INSIDE THE DIRECT CHILD OF THE FORM  */}
       </div>
