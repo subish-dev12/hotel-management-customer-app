@@ -1,14 +1,32 @@
-export default function Page() {
+import { updateReservation } from "@/app/_lib/action";
+import { getBooking, getCabin } from "@/app/_lib/data-service";
+
+export default async function Page({ params }) {
+  // const [numGuests, setNumGuests] = useState("");
   // CHANGE
-  const reservationId = 23;
-  const maxCapacity = 23;
+  // console.log("params", params);
+  // console.log("reservation id k hola ta sir", reservationId);
+  const reservationId = params.id;
+  const { numGuests, observations, cabinId } = await getBooking(reservationId);
+
+  const { maxCapacity } = await getCabin(cabinId);
+
+  console.log("k hola maxcapacity chai", maxCapacity);
+
+  // console.log("reservationdata nai data", reservationData);
+
   return (
     <div>
       <h2 className="font-semibold text-2xl text-accent-400 mb-7">
         Edit Reservation #{reservationId}
       </h2>
 
-      <form className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col">
+      <form
+        className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col"
+        action={updateReservation}
+      >
+        <input type="hidden" value={reservationId} name="reservationId" />
+        {/* we are using a hidden input field to send a currnet reservationId that needed to be edited to the server action*/}
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
@@ -16,6 +34,7 @@ export default function Page() {
             id="numGuests"
             className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
             required
+            defaultValue={numGuests}
           >
             <option value="" key="">
               Select number of guests...
@@ -35,6 +54,7 @@ export default function Page() {
           <textarea
             name="observations"
             className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+            defaultValue={observations}
           />
         </div>
 

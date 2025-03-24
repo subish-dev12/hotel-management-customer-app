@@ -64,6 +64,25 @@ export default async function deleteReservation(bookingId) {
   revalidatePath("/account/reservations");
 }
 
+export async function updateReservation(formData) {
+  const reservationId = formData.get("reservationId");
+  const numGuests = formData.get("numGuests");
+  const observations = formData.get("observations");
+  // console.log("reservationId thyakai k ho la ta", reservationId);
+  const { data, error } = await supabase
+    .from("bookings")
+    .update(numGuests, observations)
+    .eq("id", reservationId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be updated");
+  }
+  return data;
+}
+
 export async function signInAction() {
   await signIn("google", { redirectTo: "/account" });
 }
