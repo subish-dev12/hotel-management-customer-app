@@ -24,7 +24,7 @@ export default async function Page({ params }) {
       >
         <input type="hidden" value={reservationId} name="reservationId" />
         {/* we are using a hidden input field to send a currnet reservationId that needed to be edited to the server action since we can't use the params(for obtaining the query parameter through url) prop on the server action 
-        since a server action is not a ocmponent*/}
+        since a server action is not a component*/}
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select

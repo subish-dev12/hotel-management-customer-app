@@ -1,6 +1,5 @@
 "use client";
 import { TrashIcon } from "@heroicons/react/24/solid";
-import deleteReservation from "../_lib/action";
 import { useTransition } from "react";
 import SpinnerMini from "./SpinnerMini";
 //we converted this component to client so we can use the interactivity by adding onclick prop for invoking the server action
@@ -9,11 +8,11 @@ import SpinnerMini from "./SpinnerMini";
 //so in this case it's ideal to use the usetransition hook.
 // https://grok.com/chat/7e6e7314-5c95-4b71-a6ea-4717f25eea10?referrer=website
 //read last part of above article to know more
-function DeleteReservation({ bookingId }) {
+function DeleteReservation({ bookingId, onDelete }) {
   const [isPending, startTransition] = useTransition();
 
   function handleDeletion() {
-    startTransition(() => deleteReservation(bookingId));
+    startTransition(() => onDelete(bookingId));
   }
   return (
     <button
