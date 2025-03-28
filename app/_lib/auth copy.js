@@ -27,7 +27,6 @@ const authConfig = {
       try {
         const existingGuest = await getGuest(user.email);
         //we're checking here if the user already exists or not
-        console.log("user ko data", user);
         if (!existingGuest)
           await createGuest({ email: user.email, fullName: user.name });
         return true;

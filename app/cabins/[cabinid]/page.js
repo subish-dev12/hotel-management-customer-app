@@ -9,7 +9,6 @@ import { Suspense } from "react";
 //this function is specially useful when we want to genereate the meta data for the dynamic route
 //like this one.
 export async function generateMetadata({ params }) {
-  console.log(params);
   //params is an object that contains the dynamic segments of a route.
   //this  function is working on a asychronous task so it is a async function.
 

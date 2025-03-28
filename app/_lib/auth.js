@@ -31,7 +31,6 @@ const authConfig = {
       try {
         // See if this user already exists in our database.
         const existingGuest = await getGuest(user.email);
-        console.log("User data:", user);
 
         // If user doesn’t exist, create them with their email and name.
         if (!existingGuest) {

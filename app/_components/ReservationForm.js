@@ -5,7 +5,7 @@ import { useReservation } from "./ReservationContext";
 // we could have done the data fetching in this component but since there's some interactivity here so we have to perform the data fetching on the parent component .
 
 function ReservationForm({ cabin, user }) {
-  const { range } = useReservation();
+  // const { range } = useReservation();
   // CHANGE
   const { maxCapacity } = cabin;
   return (

@@ -8,7 +8,6 @@ import { redirect } from "next/navigation";
 //data sent from the form gets passed to this function as formData(we can give any name to this argument)
 //its a common convention not to use try catch block on the server action instead throwing errors directly.
 export async function updateGuest(formData) {
-  console.log(formData);
   const session = await auth();
 
   if (!session) throw new Error("Please log in");

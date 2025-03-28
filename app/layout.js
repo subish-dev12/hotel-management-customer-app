@@ -11,7 +11,6 @@ const josefin = Josefin_Sans({
 });
 
 //this console log would give me the className that gets applied to the div.
-console.log(josefin.className);
 
 //meta data variable
 // Exporting metadata means you are providing information (like the title and description) that Next.js will inject into the <head>

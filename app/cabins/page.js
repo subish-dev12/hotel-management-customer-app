@@ -25,7 +25,6 @@ export const metadata = {
 //  It’s a plain JavaScript object where keys are the parameter names, and values are either strings,
 //  arrays (for repeated keys), or undefined (if the key isn’t present).
 export default function Page({ searchParams }) {
-  console.log(searchParams);
   const filter = searchParams?.capacity ?? "all";
   return (
     <div>

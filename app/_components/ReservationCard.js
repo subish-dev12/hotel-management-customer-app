@@ -23,8 +23,6 @@ function ReservationCard({ booking, onDelete }) {
     cabins: { name, image },
   } = booking;
 
-  console.log(isPast);
-
   return (
     <div className="flex border border-primary-800">
       <div className="relative h-32 aspect-square">

@@ -6,7 +6,6 @@ import Image from "next/image";
 //this would eventually make all the routes of this app dynamic since this component is used in all the routes.
 export default async function Navigation() {
   const session = await auth();
-  console.log(session);
   return (
     <nav className="z-10 text-xl">
       <ul className="flex gap-16 items-center">
