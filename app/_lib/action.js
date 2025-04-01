@@ -8,11 +8,9 @@ import { redirect } from "next/navigation";
 //data sent from the form gets passed to this function as formData(we can give any name to this argument)
 //its a common convention not to use try catch block on the server action instead throwing errors directly.
 export async function updateGuest(formData) {
+  //authentication
   const session = await auth();
-
   if (!session) throw new Error("Please log in");
-
-  console.log("session id hai", session);
 
   const nationalID = formData.get("nationalID");
   const [nationality, countryFlag] = formData.get("nationality").split("%");
@@ -39,7 +37,36 @@ export async function updateGuest(formData) {
   // console.log(updateData);
 }
 
-export default async function deleteReservation(bookingId) {
+//one thing to remember is that on the createBooking server action the first argument will always going to be the
+//the data that we attached using the bind function ie bookingData, so the formData should be the second argument.
+export async function createBooking(bookingData, formdata) {
+  // console.log("formdata k k k k hola ta sir", formdata, bookingData);
+
+  //authentication
+  const session = await auth();
+  if (!session) throw new Error("Please login to your account");
+
+  const newBooking = {
+    ...bookingData,
+    numGuests: formdata.get("numGuests"),
+    observations: formdata.get("observations"),
+    guestId: session.user.guestId,
+    extrasPrice: 0,
+    totalPrice: bookingData.cabinPrice,
+    status: "unconfirmed",
+    hasBreakFast: false,
+    isPaid: false,
+  };
+
+  const { error } = await supabase.from("bookings").insert([newBooking]);
+  // So that the newly created object gets returned!
+
+  if (error) {
+    throw new Error("Booking could not be created");
+  }
+}
+
+export default async function deleteBooking(bookingId) {
   //authentication
   const session = await auth();
   if (!session) throw new Error("Please login to your account");
