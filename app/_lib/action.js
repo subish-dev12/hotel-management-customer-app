@@ -39,8 +39,9 @@ export async function updateGuest(formData) {
 
 //one thing to remember is that on the createBooking server action the first argument will always going to be the
 //the data that we attached using the bind function ie bookingData, so the formData should be the second argument.
+
 export async function createBooking(bookingData, formdata) {
-  // console.log("formdata k k k k hola ta sir", formdata, bookingData);
+  console.log("formdata k k k k hola ta sir", formdata, bookingData);
 
   //authentication
   const session = await auth();
@@ -57,6 +58,8 @@ export async function createBooking(bookingData, formdata) {
     hasBreakFast: false,
     isPaid: false,
   };
+
+  console.log("naya naya sajau hai sansaaar", newBooking);
 
   const { error } = await supabase.from("bookings").insert([newBooking]);
   // So that the newly created object gets returned!

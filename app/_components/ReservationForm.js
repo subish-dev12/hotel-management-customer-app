@@ -4,10 +4,11 @@ import { differenceInDays } from "date-fns";
 import { useReservation } from "./ReservationContext";
 import { createBooking } from "../_lib/action";
 
-// we could have done the data fetching in this component but since there's some interactivity here so we have to perform the data fetching on the parent component .
+// we could have done the data fetching in this component but since there's some interactivity here so we have to
+// perform the data fetching on the parent component .
 
 function ReservationForm({ cabin, user }) {
-  const { range } = useReservation();
+  const { range, resetRange } = useReservation();
   // CHANGE
   const { maxCapacity, regularPrice, discount, id } = cabin;
   const { from: startDate, to: endDate } = range;
@@ -24,6 +25,7 @@ function ReservationForm({ cabin, user }) {
     cabinId: id,
   };
 
+  //
   const createBookingWithData = createBooking.bind(null, bookingData);
   //one thing to remember is that on the createBooking server action the first argument will always going to be the
   //the data that we attached using the bind function ie bookingData, so the formData should be the second argument.
@@ -51,7 +53,10 @@ function ReservationForm({ cabin, user }) {
         {String(range.from)} to {String(range.to)}
       </p> */}
       <form
-        action={createBookingWithData}
+        action={async (formdata) => {
+          await createBookingWithData(formdata);
+          resetRange();
+        }}
         className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col"
       >
         <div className="space-y-2">
